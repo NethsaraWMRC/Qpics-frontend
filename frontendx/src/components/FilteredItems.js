@@ -37,7 +37,7 @@ function FilteredItems() {
 
     useEffect(()=>{
         fetchImages();
-    },[imageData])
+    },[])
 
     const fetchImages = ()=>{
         axios.get(baseUrl+"/api/home").then((res)=>{
@@ -77,7 +77,7 @@ function FilteredItems() {
                           <Favorite sx={{color:'white',position:'absolute',right:'0',fontSize:'30px',margin:'10px 20px','&:hover':{opacity:'0.7'}}}/>
                           <Box sx={{display:'flex',justifyContent:'space-between',alignItems:'center',width:'100%',color:'white',position:'absolute',bottom:'5px',fontSize:'14px'}}>
                             <Typography sx={{marginLeft:'15px','&:hover':{opacity:'0.7'}}}>
-                              Title : {item.title}
+                              {item.title}
                               
                               </Typography>
                               <Download sx={{fontSize:'35px',marginRight:'15px','&:hover':{opacity:'0.7'}}}/>

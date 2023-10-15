@@ -1,7 +1,6 @@
 import React from 'react'
-import { Box,Typography, Button} from '@mui/material'
-import {Download, Favorite, Close } from '@mui/icons-material';
-import styled from '@emotion/styled';
+import { Box} from '@mui/material'
+import {Close } from '@mui/icons-material';
 
 function LargeImage({imageUrl, onClose}) {
   return (

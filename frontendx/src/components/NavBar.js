@@ -58,7 +58,7 @@ function NavBar(props) {
                 <Link to={'/'}>
                     <JButton>
                         {/* <img src={logo} style={{height:'40px',width:'40px', objectFit:'cover'}}/> */}
-                        Logo
+                        Home
                     </JButton>
                 </Link>
                 
@@ -100,7 +100,7 @@ function NavBar(props) {
                     </Link>
 
                     <a href='/' style={{ textDecoration: 'none',display:props.state ? 'block' : 'none' }}>
-                            <LButton onClick={()=>{localStorage.setItem('isLoggedIn', 'false');}}>logout</LButton>
+                            <LButton onClick={()=>{localStorage.setItem('isLoggedIn', 'false');localStorage.setItem('token', null);}}>logout</LButton>
                     </a>
                     
                     <Link to={'/upload'} style={{textDecoration:'none',display:props.state ? 'block' : 'none'}}><JButton>upload</JButton> </Link> 

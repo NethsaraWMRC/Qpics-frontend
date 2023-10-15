@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Box,Typography, Button, Container, ImageList, ImageListItem,Grid,ListSubheader,ImageListItemBar,IconButton} from '@mui/material'
+import { Box,Typography, Container, } from '@mui/material'
 import {Download, Favorite } from '@mui/icons-material';
-import { useEffect,useRef } from "react";
+import { useEffect } from "react";
 import styled from '@emotion/styled';
 import CoverPage from './CoverPage';
 // import { ImageData } from './ImagesData';
@@ -36,7 +36,7 @@ function Home() {
 
     useEffect(()=>{
         fetchImages();
-    },[imageData])
+    },[])
 
     const fetchImages = ()=>{
         axios.get(baseUrl+"/api/home").then((res)=>{
@@ -73,7 +73,7 @@ function Home() {
         <Box >
 
         <Masonry columns={{xs:1,sm:2,md:3}} spacing={2}>
-                {imageData.map((item) => (
+                {imageData.slice().reverse().map((item) => (
     
                 <Box onClick={() => {handleClick(item.imageUrl)}} key={item.imageUrl} sx={{marginBottom:'10px',"&:hover": {
                     cursor:'pointer',
@@ -85,7 +85,7 @@ function Home() {
                           <Favorite sx={{color:'white',position:'absolute',right:'0',fontSize:'30px',margin:'10px 20px','&:hover':{opacity:'0.7'}}}/>
                           <Box sx={{display:'flex',justifyContent:'space-between',alignItems:'center',width:'100%',color:'white',position:'absolute',bottom:'5px',fontSize:'14px'}}>
                             <Typography sx={{marginLeft:'15px','&:hover':{opacity:'0.7'}}}>
-                              Title : {item.title}
+                              {item.title}
                               
                               </Typography>
                               <Download sx={{fontSize:'35px',marginRight:'15px','&:hover':{opacity:'0.7'}}}/>
