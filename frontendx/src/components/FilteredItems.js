@@ -65,7 +65,7 @@ function FilteredItems() {
         </Box>
       
         <Masonry columns={{xs:1,sm:2,md:3}} spacing={2}>
-                {imageData.filter((name) => name.title.toLowerCase().includes(lTopic)).map((item) => (
+                {imageData.filter((name) => name.title.toLowerCase().includes(lTopic) || name.tag1.toLowerCase().includes(lTopic) ).map((item) => (
     
                 <Box onClick={() => {handleClick(item.imageUrl)}} key={item.imageUrl} sx={{"&:hover": {
                     cursor:'pointer',

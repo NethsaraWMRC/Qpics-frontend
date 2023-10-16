@@ -3,7 +3,7 @@ import {Toolbar,InputBase, Box, Typography} from '@mui/material'
 import { Search} from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles'
 // import { ImageData } from './ImagesData';
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 import axios from "axios"
 
 const SSearch = styled('div')(({ theme }) => ({
@@ -58,6 +58,7 @@ function SearchBar() {
   const [query,setQuery] = useState("");
   const [searchBox, setSearchBox] = useState(false);
   const [imageData, setImageData] = useState([]);
+  const navigation = useNavigate();
 
     const baseUrl=`http://localhost:3030`;
 
@@ -74,6 +75,13 @@ function SearchBar() {
         })
     }
 
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter' && query.trim() !== '') {
+        // Redirect to the search page with the query
+        navigation(`/search/${query}`);
+      }
+    };
+
   return (
     <Box>
         <SSearch onClick={() => setSearchBox(!searchBox)} >
@@ -85,13 +93,14 @@ function SearchBar() {
                     placeholder="Search…"
                     inputProps={{ 'aria-label': 'search' }}
                     onChange={e=>setQuery(e.target.value)}
+                    onKeyPress={handleKeyPress}
                 />        
 
         </SSearch>
        
         <Box onMouseLeave={() => setSearchBox(!searchBox)} sx={{overflowY:'scroll',position:'absolute',boxShadow:'5px 5px 5px rgba(0,0,0,0.2)',backgroundColor:'white',color:'black',padding:'10px 0',width:'25%', maxHeight:'150px', display:searchBox ? 'block' : 'none' }}>
         {imageData.filter((name) => name.title.toLowerCase().includes(query)).slice(0, 8).map((name) => (
-            <Link to={`/search/${name.title}`} style={{textDecoration:'none'}}>
+            <Link to={`/search/${query}`} style={{textDecoration:'none'}}>
               <Box key={name.imageUrl} sx={{cursor:'pointer',padding:'10px','&:hover':{backgroundColor:'rgba(0,0,0,0.1)'}}}>
                <Typography sx={{color:'black'}}>{name.title}</Typography>
               </Box>

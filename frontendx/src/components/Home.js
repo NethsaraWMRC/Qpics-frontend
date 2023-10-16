@@ -75,12 +75,12 @@ function Home() {
         <Masonry columns={{xs:1,sm:2,md:3}} spacing={2}>
                 {imageData.slice().reverse().map((item) => (
     
-                <Box onClick={() => {handleClick(item.imageUrl)}} key={item.imageUrl} sx={{marginBottom:'10px',"&:hover": {
+                <Box key={item.imageUrl} sx={{marginBottom:'10px',"&:hover": {
                     cursor:'pointer',
                     
                   } }} >
 
-                    <Box sx={{position:'relative', gap:'2'}}>
+                    <Box onClick={() => {handleClick(item.imageUrl)}} sx={{position:'relative', gap:'2'}}>
                         <CBox>
                           <Favorite sx={{color:'white',position:'absolute',right:'0',fontSize:'30px',margin:'10px 20px','&:hover':{opacity:'0.7'}}}/>
                           <Box sx={{display:'flex',justifyContent:'space-between',alignItems:'center',width:'100%',color:'white',position:'absolute',bottom:'5px',fontSize:'14px'}}>
@@ -88,7 +88,9 @@ function Home() {
                               {item.title}
                               
                               </Typography>
-                              <Download sx={{fontSize:'35px',marginRight:'15px','&:hover':{opacity:'0.7'}}}/>
+                              
+                                <Download sx={{ fontSize: '35px', marginRight: '15px', '&:hover': { opacity: '0.7' }, color:'white' }} />
+                             
                           </Box>
                             
                         </CBox>
@@ -98,7 +100,9 @@ function Home() {
                             src={item.imageUrl}
                             alt={item.title}
                             loading="lazy"
-                            style={{ objectFit: "cover",display: 'block', width: '100%',}}
+                            style={{ objectFit: "cover",display: 'block', width: '100%'}}
+                            
+                            
                         />
       
                     </Box>
