@@ -32,16 +32,16 @@ const JButton = styled(Button)({
   marginLeft: "5px",
 });
 
-const StyleToolBar = styled(Toolbar)(({ navbr }) => ({
+const StyleToolBar = styled(Toolbar)(({ navbr, home }) => ({
   display: "flex",
   justifyContent: "space-between",
   backgroundColor: navbr ? "white" : "transparent",
   transition: "background-color 0.3s ease, box-shadow 0.3s ease",
-  boxShadow: navbr ? "0px 2px 5px rgba(0,0,0,0.1)" : "none",
+  boxShadow: navbr || !home ? "0px 2px 5px rgba(0,0,0,0.1)" : "none",
 }));
 
-const LButton = styled(Button)(({ navbr }) => ({
-  color: navbr ? "rgba(74, 74, 74, 0.9)" : "white",
+const LButton = styled(Button)(({ navbr, home }) => ({
+  color: navbr || !home ? "rgba(74, 74, 74, 0.9)" : "white",
   display: "block",
   "&:hover": { backgroundColor: "white", color: "rgb(34, 34, 34)" },
   fontFamily: "Plus Jakarta Sans",
@@ -53,11 +53,11 @@ const LButton = styled(Button)(({ navbr }) => ({
 
 function NavBar(props) {
   const [openMenu, setOpenMenu] = useState(false);
-  const [navbr, setNavbr] = useState(false);
+  const [navbr, setNavbr] = useState(true);
 
   useEffect(() => {
     const changeNavBar = () => {
-      if (window.scrollY > 100) {
+      if (window.scrollY > 200) {
         setNavbr(true);
       } else {
         setNavbr(false);
@@ -78,7 +78,7 @@ function NavBar(props) {
         boxShadow: "0px 2px 5px rgba(0,0,0,0.0)",
         backgroundColor: "transparent",
         marginTop: "5px",
-        position: navbr ? "sticky" : "absolute",
+        position: navbr || !props.home ? "sticky" : "absolute",
       }}
     >
       <StyleToolBar navbr={navbr}>
@@ -92,7 +92,7 @@ function NavBar(props) {
 
           <Typography
             sx={{
-              color: navbr ? "#252B42" : "white",
+              color: navbr || !props.home ? "#252B42" : "white",
               opacity: "0.9",
               fontSize: "24px",
               marginRight: "25px",
@@ -109,7 +109,7 @@ function NavBar(props) {
           </Typography>
         </Box>
 
-        {navbr && <SearchBar />}
+        {(navbr || !props.home) && <SearchBar />}
 
         <Navlinks>
           <MenuIcon
@@ -138,7 +138,9 @@ function NavBar(props) {
                 display: props.state ? "block" : "none",
               }}
             >
-              <LButton navbr={navbr}>profile</LButton>
+              <LButton navbr={navbr} home={props.home}>
+                profile
+              </LButton>
             </Link>
 
             <a
@@ -150,6 +152,7 @@ function NavBar(props) {
             >
               <LButton
                 navbr={navbr}
+                home={props.home}
                 onClick={() => {
                   localStorage.setItem("isLoggedIn", "false");
                   localStorage.setItem("token", null);

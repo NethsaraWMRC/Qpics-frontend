@@ -8,21 +8,7 @@ import CoverPage from "../components/CoverPage";
 import LargeImage from "../components/LargeImage";
 import Masonry from "@mui/lab/Masonry";
 import axios from "axios";
-
-const CBox = styled(Box)({
-  position: "absolute",
-  display: "flex",
-  justifyContent: "space-between",
-  transition: ".5s ease",
-  height: "100%",
-  width: "100%",
-  opacity: "0",
-  boxShadow:
-    "inset 0px 15px 100px rgb(0, 0, 0, 0.5),inset 0px -15px 100px rgb(0, 0, 0,0.5)",
-  "&:hover": {
-    opacity: "1",
-  },
-});
+import NavBar from "../components/NavBar";
 
 function Home() {
   const [isView, setIsView] = useState(false);
@@ -30,6 +16,7 @@ function Home() {
   const [imageData, setImageData] = useState([]);
   const [favColors, setFavColors] = useState("");
   const [favClick, setFavClick] = useState("");
+  const [hoveredImage, setHoveredImage] = useState(null);
 
   const baseUrl = `http://localhost:3030`;
 
@@ -71,10 +58,24 @@ function Home() {
     });
   };
 
+  const handleMouseEnter = (imageUrl) => {
+    setHoveredImage(imageUrl); // Set the hovered image URL
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredImage(null); // Reset the hovered image when the mouse leaves
+  };
+
   return (
     <Box>
       <CoverPage />
-      <Container maxWidth="xl" sx={{ marginTop: "40px", maxWidth: "1400px" }}>
+      <Container
+        maxWidth="xl"
+        sx={{
+          marginTop: "40px",
+          maxWidth: "1400px",
+        }}
+      >
         <Typography
           sx={{
             fontSize: "24px",
@@ -94,6 +95,8 @@ function Home() {
               .map((item) => (
                 <Box
                   key={item.imageUrl}
+                  onMouseEnter={() => handleMouseEnter(item.imageUrl)}
+                  onMouseLeave={handleMouseLeave}
                   sx={{
                     marginBottom: "10px",
                     "&:hover": {
@@ -101,12 +104,11 @@ function Home() {
                     },
                   }}
                 >
+                  {/* main cover box */}
                   <Box sx={{ position: "relative", gap: "2" }}>
-                    <CBox>
+                    {hoveredImage === item.imageUrl && (
                       <Favorite
-                        onClick={() => {
-                          handleFavoriteClick(item.imageUrl);
-                        }}
+                        onClick={() => handleFavoriteClick(item.imageUrl)}
                         sx={{
                           color: favColors[item.imageUrl] || "white",
                           position: "absolute",
@@ -114,8 +116,12 @@ function Home() {
                           fontSize: "30px",
                           margin: "10px 20px",
                           "&:hover": { opacity: "0.7" },
+                          zIndex: 10,
                         }}
                       />
+                    )}
+
+                    {hoveredImage === item.imageUrl && (
                       <Box
                         sx={{
                           display: "flex",
@@ -126,6 +132,7 @@ function Home() {
                           position: "absolute",
                           bottom: "5px",
                           fontSize: "14px",
+                          zIndex: 10,
                         }}
                       >
                         <Typography
@@ -146,12 +153,30 @@ function Home() {
                           }}
                         />
                       </Box>
-                    </CBox>
+                    )}
+
                     <Box
                       onClick={() => {
                         handleClick(item.imageUrl);
                       }}
                     >
+                      {hoveredImage === item.imageUrl && (
+                        <Box
+                          sx={{
+                            width: "100%",
+                            height: "100%",
+                            position: "absolute",
+
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background:
+                              "linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent)",
+                            zIndex: 1,
+                          }}
+                        ></Box>
+                      )}
                       <img
                         src={item.imageUrl}
                         alt={item.title}
@@ -160,6 +185,8 @@ function Home() {
                           objectFit: "cover",
                           display: "block",
                           width: "100%",
+                          position: "relative",
+                          zIndex: 0,
                         }}
                       />
                     </Box>
