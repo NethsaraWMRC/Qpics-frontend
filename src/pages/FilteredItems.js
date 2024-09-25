@@ -90,7 +90,7 @@ function FilteredItems() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ paddingTop: "100px" }}>
+    <Container maxWidth="xl" sx={{ paddingTop: "60px" }}>
       <Box>
         <Typography
           sx={{
