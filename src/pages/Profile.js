@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Box, Typography, Button, Container, Avatar } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Download, Favorite, Scale } from "@mui/icons-material";
@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import EditImage from "../components/EditImage";
 
 import CropImage from "../components/CropImage";
+import { fetchProPic } from "../api/ProfileService";
 
 const JButton = styled(Button)({
   backgroundColor: "rgb(5, 160, 129)",
@@ -48,15 +49,19 @@ function Profile() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [displayContainer, setDisplayContainer] = useState("block");
   const [imageLocalUrl, setImageLocalUrl] = useState(null);
+  const [proPic, setProPic] = useState(null);
 
   const navigation = useNavigate();
 
   const baseUrl = `http://localhost:3030`;
 
+  const inputRef = useRef(null); // Add useRef hook to reference the input field
+
   useEffect(() => {
     fetchImages();
     fetchUser();
-  }, []);
+    fetchProImage();
+  }, [selectedImage]);
 
   const fetchImages = () => {
     axios
@@ -65,19 +70,14 @@ function Profile() {
       })
       .then((res) => {
         setImageData(res.data);
-        // console.log(imageData)
       })
       .catch((err) => {
         if (err.response && err.response.status === 401) {
-          // This is an unauthorized error
           console.log("Unauthorized error");
-          // Perform your specific actions for unauthorized error here
-
           localStorage.setItem("isLoggedIn", "false");
           navigation("/login");
           window.location.reload("/login");
         } else {
-          // Handle other errors
           console.log("Error:", err);
         }
       });
@@ -96,6 +96,15 @@ function Profile() {
       });
   };
 
+  const fetchProImage = async () => {
+    try {
+      const response = await fetchProPic();
+      setProPic(response.proPic);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleClick = (imageUrl, id) => {
     setIsView(true);
     setClickedUrl(imageUrl);
@@ -108,11 +117,11 @@ function Profile() {
   };
 
   const handleMouseEnter = (imageUrl) => {
-    setHoveredImage(imageUrl); // Set the hovered image URL
+    setHoveredImage(imageUrl);
   };
 
   const handleMouseLeave = () => {
-    setHoveredImage(null); // Reset the hovered image when the mouse leaves
+    setHoveredImage(null);
   };
 
   useEffect(() => {
@@ -121,6 +130,18 @@ function Profile() {
       setDisplayContainer("none");
     }
   }, [selectedImage]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      inputRef.current.value = null; // Reset input field after selecting the image
+    }
+  };
+
+  if (!proPic) {
+    return;
+  }
 
   return (
     <Box>
@@ -153,20 +174,29 @@ function Profile() {
               paddingTop: "80px",
             }}
           >
-            <Avatar
-              alt="Remy Sharp"
-              src="/static/images/avatar/1.jpg"
+            <Box
               sx={{
-                width: 140,
-                height: 140,
+                borderRadius: "200px",
+                width: "160px",
+                height: "160px",
+                overflow: "hidden",
               }}
-            />
+            >
+              <img
+                src={proPic}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </Box>
+
             <input
               accept="image/*"
               type="file"
-              onChange={(e) => {
-                setSelectedImage(e.target.files[0]);
-              }}
+              onChange={handleFileChange} // Attach the new handleFileChange function
+              ref={inputRef} // Attach the ref to the input
               style={{
                 position: "absolute",
                 fontSize: "0",
@@ -174,7 +204,6 @@ function Profile() {
                 width: "140px",
                 height: "140px",
                 opacity: 1,
-                backgroundColor: "rgba(0,0,0,0.3)",
                 cursor: "pointer",
               }}
             />
@@ -211,7 +240,6 @@ function Profile() {
                   },
                 }}
               >
-                {/* main cover box */}
                 <Box sx={{ position: "relative", gap: "2" }}>
                   {hoveredImage === item.imageUrl && (
                     <Box
@@ -258,7 +286,6 @@ function Profile() {
                           width: "100%",
                           height: "100%",
                           position: "absolute",
-
                           top: 0,
                           left: 0,
                           right: 0,

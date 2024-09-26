@@ -5,6 +5,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 import React, { useState, useRef } from "react";
 import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+import { updateProPic } from "../api/ProfileService";
 
 function CropImage({ propic, changeImage, changeDisplay }) {
   const [crop, setCrop] = useState();
@@ -40,7 +41,18 @@ function CropImage({ propic, changeImage, changeDisplay }) {
       canvas.height = completedCrop.height;
       const ctx = canvas.getContext("2d");
 
-      // Draw the cropped image onto the canvas
+      // Draw the circular mask
+      ctx.beginPath();
+      ctx.arc(
+        completedCrop.width / 2, // x position of the center
+        completedCrop.height / 2, // y position of the center
+        completedCrop.width / 2, // radius
+        0,
+        2 * Math.PI
+      );
+      ctx.clip(); // Clip the area to form a circle
+
+      // Draw the cropped image within the circular mask
       ctx.drawImage(
         imgRef.current,
         completedCrop.x * scaleX,
@@ -59,32 +71,27 @@ function CropImage({ propic, changeImage, changeDisplay }) {
           console.error("Canvas is empty");
           return;
         }
-        const croppedImageUrl = URL.createObjectURL(blob);
-        setSelectedImage(croppedImageUrl);
-        firebaseUpload(blob); // You can use this URL to preview/download the cropped image
-      }, "image/jpeg");
-
-      changeDisplay("block");
-      changeImage(null);
+        firebaseUpload(blob); // Upload the circular cropped image
+      }, "image/png"); // Save as PNG to preserve transparency
     }
   };
 
   //image uploading function
   const firebaseUpload = async (blob) => {
     try {
-      if (selectedImage) {
-        const proPicRef = ref(storage, `user/profile/${v4()}`);
+      const proPicRef = ref(storage, `user/profile/${v4()}`);
 
-        await uploadBytes(proPicRef, blob);
+      await uploadBytes(proPicRef, blob);
 
-        const newProPicUrl = await getDownloadURL(proPicRef);
-        setProPicUrl(newProPicUrl);
-        console.log(newProPicUrl);
-        return newProPicUrl; // Return the URL
-      } else {
-        console.error("Profile picture is not selected");
-        return null;
-      }
+      const newProPicUrl = await getDownloadURL(proPicRef);
+      setProPicUrl(newProPicUrl);
+
+      await updateProPic(newProPicUrl);
+      console.log(newProPicUrl);
+
+      changeDisplay("block");
+      changeImage(null);
+      return newProPicUrl; // Return the URL
     } catch (error) {
       console.error("Error uploading profile picture:", error);
       return null;
@@ -107,7 +114,7 @@ function CropImage({ propic, changeImage, changeDisplay }) {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "40%",
+          width: "50%",
           alignItems: "center",
         }}
       >
@@ -118,7 +125,7 @@ function CropImage({ propic, changeImage, changeDisplay }) {
           circularCrop
           keepSelection
           aspect={1}
-          minWidth={150}
+          minWidth={160}
         >
           <img
             src={propic}
