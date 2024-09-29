@@ -8,7 +8,7 @@ import CoverPage from "../components/CoverPage";
 import LargeImage from "../components/LargeImage";
 import Masonry from "@mui/lab/Masonry";
 import axios from "axios";
-import NavBar from "../components/NavBar";
+import { downloadImage } from "../services/DownloadImages";
 
 function Home() {
   const [isView, setIsView] = useState(false);
@@ -145,6 +145,7 @@ function Home() {
                         </Typography>
 
                         <Download
+                          onClick={() => downloadImage(item.imageUrl)}
                           sx={{
                             fontSize: "35px",
                             marginRight: "15px",

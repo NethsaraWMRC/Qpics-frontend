@@ -11,6 +11,7 @@ import EditImage from "../components/EditImage";
 
 import CropImage from "../components/CropImage";
 import { fetchProPic } from "../api/ProfileService";
+import { downloadImage } from "../services/DownloadImages";
 
 const JButton = styled(Button)({
   backgroundColor: "rgb(5, 160, 129)",
@@ -265,6 +266,7 @@ function Profile() {
                       </Typography>
 
                       <Download
+                        onClick={() => downloadImage(item.imageUrl)}
                         sx={{
                           fontSize: "35px",
                           marginRight: "15px",
